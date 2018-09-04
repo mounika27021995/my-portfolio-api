@@ -19,6 +19,7 @@ function urlify(str){
   return urlifyStr;
 }
 
+
 /* GET all blogs listing. */
 router.get('/', function(req, res, next) {
   Blog.find({}, function(err, blogs){
