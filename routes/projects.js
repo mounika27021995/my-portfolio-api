@@ -22,10 +22,8 @@ function urlify(str){
 /* GET all projects listing. */
 router.get('/', function(req, res, next) {
   Project.find({}, function(err, projects){
-    console.log(JSON.stringify(projects));
 
     if(err){
-        console.log(JSON.stringify(err));
         res.json({code: 500, message: 'Something went wrong'});
     }else if (projects){
       res.json({code: 200, data: projects});
@@ -36,10 +34,8 @@ router.get('/', function(req, res, next) {
 /* GET project by alias. */
 router.get('/:projectAlias', function(req, res, next) {
   Project.findOne({alias: req.params.projectAlias}, function(err, projects){
-    console.log(JSON.stringify(projects));
-
+    
     if(err){
-        console.log(JSON.stringify(err));
         res.json({code: 500, message: 'Something went wrong'});
     }else if (projects){
       res.json({code: 200, data: projects});
@@ -50,7 +46,6 @@ router.get('/:projectAlias', function(req, res, next) {
 /* Create project. */
 router.post('/', function(req, res, next) {
   var project = req.body;
-  console.log('---create project---');
   var projectModel = new Project();
   projectModel.name = project.name;
   projectModel.alias = urlify(project.name); 
@@ -69,7 +64,7 @@ router.post('/', function(req, res, next) {
   projectModel.relatedProjects = project.relatedProjects;
   projectModel.createAt = new Date();
   projectModel.save(function(err, project){
-      console.log(JSON.stringify(project));
+      
       if(err){
         res.json({code: 500, message: 'Something went wrong'});
       }else{
@@ -82,12 +77,10 @@ router.post('/', function(req, res, next) {
 router.put('/:projectAlias', function(req, res, next) {
   var pObject = req.body;
 
-  Project.findOne({'alias': projectAlias}, function(err, project){
+  Project.findOne({'alias':projectAlias}, function(err, project){
     if(err){
         callback(err, null);
     }else{
-
-        console.log(JSON.stringify(project));
         if(pObject.name){
             project.name = pObject.name;
         }
@@ -102,7 +95,6 @@ router.put('/:projectAlias', function(req, res, next) {
         }
         
         project.save(function(err, project){
-            console.log(JSON.stringify(project));
             if(err){
               res.json({code: 500, message: 'Something went wrong'});
             }else{

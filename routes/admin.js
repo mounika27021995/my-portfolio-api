@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var Admin = require('../model/adminModel');
+var ProjectModel = require('../model/projectModel');
 
 /*
 
@@ -19,27 +19,11 @@ function urlify(str){
   return urlifyStr;
 }
 
-/* GET all blogs listing. */
-router.get('/', function(req, res, next) {
-  Admin.find({}, function(err, admin){
-    console.log(JSON.stringify(admin));
-
-    if(err){
-        console.log(JSON.stringify(err));
-        res.json({code: 500, message: 'Something went wrong'});
-    }else if (admin){
-      res.json({code: 200, data: admin});
-    }
-  });
-});
 
 /* GET blog by alias. */
 router.get('/:adminAlias', function(req, res, next) {
   Blog.findOne({alias: req.params.adminAlias}, function(err,admin){
-    console.log(JSON.stringify(admin));
-
     if(err){
-        console.log(JSON.stringify(err));
         res.json({code: 500, message: 'Something went wrong'});
     }else if (admin){
       res.json({code: 200, data: admin});
@@ -50,7 +34,6 @@ router.get('/:adminAlias', function(req, res, next) {
 /* Create blog. */
 router.post('/', function(req, res, next) {
   var admin = req.body;
-  console.log('---create admin---');
   var adminModel = new Admin();
   adminModel.name = admin.name;
   adminModel.alias = urlify(admin.name); 
@@ -69,7 +52,6 @@ router.post('/', function(req, res, next) {
   adminModel.relatedAdmin = admin.relatedAdmins;
   adminModel.createAt = new Date();
   adminModel.save(function(err, admin){
-      console.log(JSON.stringify(admin));
       if(err){
         res.json({code: 500, message: 'Something went wrong'});
       }else{
@@ -123,5 +105,27 @@ router.delete('/:adminAlias', function(req, res, next) {
     }
   });
 });
+
+router.post('/projects/:projectAlias/update', function(req, res, next){
+  var body = req.body;
+  var newProjectData = new ProjectModel();
+  newProjectData = {
+    name: body.name,
+    alias: urlify(body.name),
+    githubUrl: body.githubUrl,
+    description: body.description
+  };
+  console.log(newProjectData);
+  newProjectData.updateOne({"alias":req.params.projectAlias}, newProjectData, function(err, project){
+    if(!err){
+      res.json({code: 200, data:project});
+    }
+    else{
+      res.json({code: 500, message: 'Something went wrong'});
+    }
+  });
+
+});
+
 
 module.exports = router;
